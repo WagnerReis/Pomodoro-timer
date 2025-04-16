@@ -23,7 +23,7 @@ export function History() {
           </thead>
           <tbody>
             {cycles.map((cycle) => {
-              const publishedAtRelativeToNow = formatDistanceToNow(
+              const startedAtRelativeToNow = formatDistanceToNow(
                 cycle.startDate,
                 {
                   locale: ptBR,
@@ -35,7 +35,7 @@ export function History() {
                 <tr key={cycle.id}>
                   <td>{cycle.task}</td>
                   <td>{cycle.minutesAmount} minutos</td>
-                  <td>{publishedAtRelativeToNow}</td>
+                  <td>{startedAtRelativeToNow}</td>
                   <td>
                     {cycle.interrupedDate && (
                       <Status statusColor="red">Interrompido</Status>
