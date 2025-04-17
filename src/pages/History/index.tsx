@@ -24,7 +24,7 @@ export function History() {
           <tbody>
             {cycles.map((cycle) => {
               const startedAtRelativeToNow = formatDistanceToNow(
-                cycle.startDate,
+                new Date(cycle.startDate),
                 {
                   locale: ptBR,
                   addSuffix: true,
