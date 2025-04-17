@@ -31,20 +31,48 @@ interface CyclesContextProviderProps {
   children: ReactNode;
 }
 
+interface CyclesState {
+  cycles: Cycle[];
+  activeCycleId: string | null;
+}
+
 export function CyclesContextProvider({
   children,
 }: CyclesContextProviderProps) {
-  const [cycles, dispatch] = useReducer((state: Cycle[], action: any) => {
-    switch (action.type) {
-      case "ADD_NEW_CYCLE":
-        return [...state, action.payload.newCycle];
-    }
+  const [cyclesState, dispatch] = useReducer(
+    (state: CyclesState, action: any) => {
+      switch (action.type) {
+        case "ADD_NEW_CYCLE":
+          return {
+            ...state,
+            cycles: [...state.cycles, action.payload.newCycle],
+            activeCycleId: action.payload.newCycle.id,
+          };
+        case "INTERRUPT_CURRENT_CYCLE":
+          return {
+            ...state,
+            cycles: state.cycles.map((cycle) => {
+              if (cycle.id === state.activeCycleId) {
+                return { ...cycle, interrupedDate: new Date() };
+              } else {
+                return cycle;
+              }
+            }),
+            activeCycleId: null,
+          };
+      }
 
-    return state;
-  }, []);
+      return state;
+    },
+    {
+      cycles: [],
+      activeCycleId: null,
+    },
+  );
 
-  const [activeCycleId, setActiveCycleId] = useState<string | null>(null);
   const [amountSecondsPassed, setAmountSecondsPassed] = useState(0);
+
+  const { cycles, activeCycleId } = cyclesState;
 
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId);
 
@@ -89,7 +117,7 @@ export function CyclesContextProvider({
     });
 
     // setCycles((state) => [...state, newCycle]);
-    setActiveCycleId(id);
+    // setActiveCycleId(id);
     setAmountSecondsPassed(0);
   }
 
@@ -103,6 +131,7 @@ export function CyclesContextProvider({
     //     }
     //   }),
     // );
+    // setActiveCycleId(null);
 
     dispatch({
       type: "INTERRUPT_CURRENT_CYCLE",
@@ -110,7 +139,6 @@ export function CyclesContextProvider({
         activeCycleId,
       },
     });
-    setActiveCycleId(null);
   }
 
   return (
