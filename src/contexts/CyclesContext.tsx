@@ -60,9 +60,21 @@ export function CyclesContextProvider({
             }),
             activeCycleId: null,
           };
+        case "MARK_CURRENT_CYCLE_AS_FINISHED":
+          return {
+            ...state,
+            cycles: state.cycles.map((cycle) => {
+              if (cycle.id === state.activeCycleId) {
+                return { ...cycle, finishedDate: new Date() };
+              } else {
+                return cycle;
+              }
+            }),
+            activeCycleId: null,
+          };
+        default:
+          return state;
       }
-
-      return state;
     },
     {
       cycles: [],
@@ -77,16 +89,6 @@ export function CyclesContextProvider({
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId);
 
   function markCurrentCycleAsFinished() {
-    // setCycles((state) =>
-    //   state.map((cycle) => {
-    //     if (cycle.id === activeCycleId) {
-    //       return { ...cycle, finishedDate: new Date() };
-    //     } else {
-    //       return cycle;
-    //     }
-    //   }),
-    // );
-
     dispatch({
       type: "MARK_CURRENT_CYCLE_AS_FINISHED",
       payload: {
@@ -116,23 +118,10 @@ export function CyclesContextProvider({
       },
     });
 
-    // setCycles((state) => [...state, newCycle]);
-    // setActiveCycleId(id);
     setAmountSecondsPassed(0);
   }
 
   function interrupCurrentCycle() {
-    // setCycles((state) =>
-    //   state.map((cycle) => {
-    //     if (cycle.id === activeCycleId) {
-    //       return { ...cycle, interrupedDate: new Date() };
-    //     } else {
-    //       return cycle;
-    //     }
-    //   }),
-    // );
-    // setActiveCycleId(null);
-
     dispatch({
       type: "INTERRUPT_CURRENT_CYCLE",
       payload: {
